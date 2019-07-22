@@ -232,5 +232,56 @@ select avg(score) from sudents where gender='m';
   select * from cinema where description != 'boring' and id % 2 = 1 order by rating desc;单引号+‘=’
   ```
 
+### 1.7 连接查询
+
+- INNER JOIN查询的写法：
+
+  1. 先确定主表，仍然使用FROM <表1>的语法；
+
+  2. 再确定需要连接的表，使用INNER JOIN <表2>的语法；
+
+  3. 然后确定连接条件，使用ON <条件...>，这里的条件是s.class_id = c.id，表示students表的class_id列与classes表的id列相同的行需要连接；
+
+  4. 可选：加上WHERE子句、ORDER BY等子句。
+     这是内查询INNER JOIN，只返回同时存在于两张表的行数据
+     还有外查询,外查询分为RIGHT OUTER JOIN，LEFT OUTER JOIN和FULL OUTER JOIN。它们的区别是：
+
+     •	RIGHT OUTER JOIN返回右表都存在的行。如果某一行仅在右表存在，那么结果集就会以NULL填充剩下的字段。
+     •	LEFT OUTER JOIN则返回左表都存在的行。如果某一行仅在左表存在，那么结果集就会以NULL填充剩下的字段。
+     •	FULL OUTER JOIN会把两张表的所有记录全部选择出来，并且，自动把对方不存在的列填充为NULL
+
+```mysql
+SELECT s.id, s.name, s.class_id, c.name class_name, s.gender, s.score
+FROM students s
+INNER JOIN classes c
+ON s.class_id = c.id;
+```
+
+
+
+------
+
 ## 2 增
+
+- 表中插入数据
+
+  ```mysql
+  insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
+  ```
+
+  - ***Ignore*** 忽略插入与表内UNIQUE字段都相同的记录
+  - ***replace*** 更新替代与表内UNIQUE字段都相同的记录
+  
+------
+
+## 3 改
+
+```mysql
+update salary set sex= case sex when 'm' then 'f' else 'm' end;
+```
+
+```mysql
+update titles_test set to_date=NULL[CT1] ,from_date='2001-01-01' where to_date='9999-01-01';
+# NULL不能改为''
+```
 

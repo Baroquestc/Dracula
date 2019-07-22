@@ -117,7 +117,7 @@ cpu_load_short,direction=in,host=server01,region=us-west value=2.0 1422568543702
  - 2xx：204代表no content，200代表InfluxDB可以接收请求但是没有完成请求。一般会在body体中带有出错信息。
  - 4xx：InfluxDB不能解析请求。
  - 5xx：系统出现错误。
- 
+
 ## 3 HTTP API查询操作
 ### 3.1 通过HTTP API查询方法
 使用HTTP API在InfluxDB进行查询主要是发送 GET 请求到 InfluxDB的 /query 端
@@ -321,7 +321,7 @@ name: h2o_feet
 time                           max       location
 2015-08-29T07:24:00Z     9.964     coyote_creek
 ```
- 
+
  - MIN()函数
 作用：返回一个字段中的最小值。该字段类型必须是长整型，float64，或布尔类型。
 ```python
