@@ -257,8 +257,6 @@ INNER JOIN classes c
 ON s.class_id = c.id;
 ```
 
-
-
 ------
 
 ## 2 增
