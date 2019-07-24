@@ -182,6 +182,24 @@ select avg(score) from sudents where gender='m';
     having gender=1;
     ```
 
+- 根据gender进行分组显示数量
+
+  ```mysql
+  select count(*) from students group by gender;
+  ```
+  
+- 根据class_id进行分组显示数量和class_id
+
+  ```mysql
+  select count(*),class_id from students group by class_id;
+  ```
+
+- 根据多个条件进行分组(先根据class_id分组，后根据gender分组)
+
+  ```mysql
+  select count(*),gender,class_id from students group by class_id,gender;
+  ```
+
 - 对比where和having
 
   - where是对from后面指定的表进行数据筛选，属于对原始数据的筛选
@@ -267,19 +285,115 @@ ON s.class_id = c.id;
   insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
   ```
 
-  - ***Ignore*** 忽略插入与表内UNIQUE字段都相同的记录
-  - ***replace*** 更新替代与表内UNIQUE字段都相同的记录
+  - <font color=red>*Ignore* </font>忽略插入与表内UNIQUE字段都相同的记录
+  - <font color=red>*Replace* </font> 更新替代与表内UNIQUE字段都相同的记录
   
 ------
 
 ## 3 改
 
-```mysql
-update salary set sex= case sex when 'm' then 'f' else 'm' end;
-```
+- 添加列
 
-```mysql
-update titles_test set to_date=NULL[CT1] ,from_date='2001-01-01' where to_date='9999-01-01';
-# NULL不能改为''
-```
+  基本形式：alter table 表名 add 列名 列数据类型 [after 插入位置];
+
+  **在名为 age 的列后插入列 birthday**
+
+  ```mysql
+  alter table students add birthday date after age;
+  ```
+
+- 修改列
+
+  基本形式: alter table 表名 change 列名称 列新名称 新数据类型;
+
+  将表 tel 列改名为 telphone；
+
+  ```mysql
+  alter table students change tel telphone char(13) default "-";
+  ```
+
+  将 name 列的数据类型改为 char(16): 
+
+  ```mysql
+  alter table students change name name char(16) not null;
+  ```
+
+- 重命名表
+
+  基本形式: alter table 表名 rename 新表名;
+
+  ```mysql
+  alter table students rename workmates;
+  ```
+
+- 更新表中的数据
+
+  ```mysql
+  update salary set sex= case sex when 'm' then 'f' else 'm' end;
+  ```
+
+  ```mysql
+  update titles_test set to_date=NULL,from_date='2001-01-01' where to_date='9999-01-01';
+  # NULL不能改为''
+  ```
+
+------
+
+## 4 删
+
+- 删除整个数据库
+
+  基本形式：drop database 数据库名；
+
+  ```mysql
+  drop database samp_db;
+  ```
+
+- 删除整张表
+
+  基本形式：drop table 表名;
+
+  ```mysql
+  drop table workmates;
+  ```
+
+- 删除表中的数据
+
+  ```mysql
+  delete from students where id=2;
+  ```
+
+- 删除列
+
+  基本形式：alter table 表名 drop 列名称;
+
+  ```mysql
+  alter table students drop birthday;
+  ```
+
+------
+
+## 5 视图
+
+- 视图本质就是对查询的一个封装
+
+- 定义视图
+
+  ```mysql
+  create view stuscore as 
+  select students.*,scores.score from scores
+  inner join students on scores.stuid=students.id;
+  ```
+
+  ```mysql
+  Create view v_emp(v_name,v_age,v_phone) as select name,age,phone from employee;
+  ```
+
+- 视图的用途就是查询
+
+  ```mysql
+  select * from stuscore;
+  ```
+
+  
 
