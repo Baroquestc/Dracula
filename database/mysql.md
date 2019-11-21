@@ -60,13 +60,37 @@ rpm -qa | grep mysql
 
    * 查看服务器版本。
 
-     ```SQL
+     ```mysql
      select version();
      ```
 
-   * 获取帮助。
+   * 查看当前使用的数据库
 
-     ```SQL
+     ```mysql
+     select database();
+     ```
+     
+   * 查看表的结构
+   
+     ```mysql
+     desc 表名;
+     ```
+     
+   * 显示时间
+   
+     ```mysql
+     select now();
+     ```
+     
+   * 退出数据库
+   
+     ```mysql
+     exit/quit/ctrl+d
+     ```
+     
+   * 获取帮助。
+   
+     ```mysql
      ? contents;
      ? functions;
       ? numeric functions;
@@ -137,7 +161,9 @@ SQL>ROLLBACK;
 
 ------
 
-## 2 SQL增、删、改、查
+## 2 SQL增、删、改、查(curd)
+
+curd的解释: 代表创建（Create）、更新（Update）、读取（Retrieve）和删除（Delete）
 
 ### 2.1 查
 
@@ -151,10 +177,14 @@ SQL>ROLLBACK;
 
   - _: 任意一个字符
 
+  - not
+
   - 查询姓黄的学生
 
     ```mysql
     select * from students where sname like '黄%';
+    -- 错误写法
+    select * from students where sname="黄%";
     ```
 
   - 查询姓黄并且名字是一个字的学生
@@ -167,6 +197,23 @@ SQL>ROLLBACK;
 
     ```mysql
     select * from students where sname like '黄%' or sname like '%靖%';
+    ```
+    
+  - 查询至少有2个字的名字
+
+    ```mysql
+    -- %字符也可以代表一个
+    select name from students where name like "__%";
+    ```
+
+  - rlike正则
+
+    ```mysql
+  -- 查询以 周开始的姓名
+    select name from students where name rlike "^周.*";
+
+    -- 查询以 周开始、伦结尾的姓名
+    select name from students where name rlike "^周.*伦$";
     ```
 
 - 范围查询
@@ -185,6 +232,8 @@ SQL>ROLLBACK;
 
     ```mysql
     select * from students where id between 3 and 8;
+    -- 错误的写法
+    select * from students where id not (between 3 and 8);
     ```
 
 - 空判断
@@ -232,6 +281,8 @@ SQL>ROLLBACK;
 
 4. **MIN**     **计算某一列的最小值（不限于数值类型）**
 
+5. **ROUND**  **四舍五入，round(sum(age)/count(*), 3),保留三位小数**
+
    ------
 
 * 查询students表中一共有多少记录
@@ -266,6 +317,7 @@ select avg(score) from sudents where gender='m';
 
   ```mysql
   select classs from courses group by class having count(distinct student) >= 5
+  -- 在select后面列前使用distinct可以消除重复的行
   ```
 
 - substr()获取Employees中的first_name，查询按照first_name最后两个字母，按照升序进行排列
@@ -279,6 +331,8 @@ select avg(score) from sudents where gender='m';
   ```
 
 #### 2.1.3 分组查询
+
+和聚合配合使用才具有意义
 
 - 分组后的数据筛选
 
@@ -309,6 +363,8 @@ select avg(score) from sudents where gender='m';
 
   ```mysql
   select count(*) from students group by gender;
+  -- 错误
+  select * from students group by gender;
   ```
   
 - 根据class_id进行分组显示数量和class_id
@@ -323,6 +379,21 @@ select avg(score) from sudents where gender='m';
   select count(*),gender,class_id from students group by class_id,gender;
   ```
 
+- group_concat(字段名)可以作为一个输出字段来使用
+
+  ```mysql
+  -- 查询同种性别中的姓名
+  select gender,group_concat(name) from students where gender=1 group by gender;
+  select gender,group_concat(name, age, id) from students where gender=1 group by gender;
+  select gender,group_concat(name, "_", age, " ", id) from students where gender=1 group by gender;
+  ```
+  
+- with rollup的作用是：在最后新增一行，来记录当前列里所有记录的总和
+
+  ```mysql
+  select gender,group_concat(age) from students group by gender with rollup;
+  ```
+  
 - 对比where和having
 
   - where是对from后面指定的表进行数据筛选，属于对原始数据的筛选
@@ -342,6 +413,12 @@ select avg(score) from sudents where gender='m';
   SELECT id, name, gender, score FROM students ORDER BY score;( ORDER BY score DESC倒序;)
   ```
 
+- 显示所有的学生信息，先按照年龄从大-->小排序，当年龄相同时 按照身高从高-->矮排序
+
+  ```mysql
+  select * from students  order by age desc,height desc;
+  ```
+
 #### 2.1.5 分页查询
 
 - 查询结果每页最多3条，显示第1面（注意索引从0开始）
@@ -357,7 +434,7 @@ select avg(score) from sudents where gender='m';
   ```
 
   - OFFSET计算公式为<font color=red>pageSize * (pageIndex - 1)</font>。
-  - `OFFSET`超过了查询的最大数量并不会报错，而是得到一个空的结果集
+  - `OFFSET`超过了查询的最大数量并不会报错，而是得到一个空的结果集，必须放在末尾
   - 在MySQL中，<font color=red>LIMIT 15 OFFSET 30</font>还可以简写成<font color=red>LIMIT 30, 15</font>
   - 使用<font color=red>LIMIT <M> OFFSET <N></font>分页时，随着N越来越大，查询效率也会越来越低
 
@@ -403,6 +480,62 @@ select stuname, couname, score from tb_student inner join tb_record on stuid=sid
 select stuname, couname, score from tb_student inner join tb_record on stuid=sid inner join tb_course on couid=cid where score is not null order by score desc limit 10, 5;
 ```
 
+####2.1.8 自关联查询
+
+- 查询所有省份
+
+  ```mysql
+  select * from areas where pid is null;
+  ```
+
+- 查询出山东省有哪些市
+
+  ```mysql
+  select * from areas as province inner join areas as city on city.pid=province.aid having province.atitle="山东省";
+  select province.atitle, city.atitle from areas as province inner join areas as city on city.pid=province.aid having province.atitle="山东省";
+  ```
+
+- 查询出青岛市有哪些县城
+
+  ```mysql
+  select province.atitle, city.atitle from areas as province inner join areas as city on city.pid=province.aid having province.atitle="青岛市";
+  select * from areas where pid=(select aid from areas where atitle="青岛市")
+  ```
+
+#### 2.1.9 子查询
+
+- 标量子查询:子查询返回的结果是一个数据(一行一列)
+
+  - 查询班级学生的平均身高
+
+  - 查询班级学生平均年龄
+
+    2.查询大于平均年龄的学生
+
+  ```mysql
+  select * from students where age > (select avg(age) from students);
+  ```
+
+- 列级子查询:返回的结果是一列(一列多行)
+
+  - 查询还有学生在班的所有班级名字
+  - 1. 找出学生表中所有的班级 id
+    2. 找出班级表中对应的名字
+
+  ```mysql
+  -- 查询学生的班级号能够对应的学生信息
+  select * from students where cls_id in (select id from classes);
+  ```
+
+- 行级子查询:返回的结果是一行(一行多列)
+
+  - 需求: 查找班级年龄最大,身高最高的学生
+  - 行元素: 将多个字段合成一个行元素,在行级子查询中会使用到行元素
+
+  ```mysql
+  select * from students where (height,age) = (select max(height),max(age) from students);
+  ```
+
 ------
 
 ### 2.2 增
@@ -414,8 +547,14 @@ select stuname, couname, score from tb_student inner join tb_record on stuid=sid
 -- 如果存在名为school的数据库就删除它
 drop database if exists school;
 
--- 创建名为school的数据库并设置默认的字符集和排序方式
+-- 创建名为school的数据库并设置默认的字符集和排序方式（如果不添加charset=utf8,则默认拉丁）
 create database school default charset utf8 collate utf8_bin;
+
+-- 查看创建数据库的语句
+show create database school；
+
+-- 查看当前使用的数据库
+select database（）；
 
 -- 切换到school数据库上下文环境
 use school;
@@ -441,6 +580,16 @@ collid		int not null comment '所属学院',
 primary key (stuid),
 foreign key (collid) references tb_college (collid)
 );
+
+-- 创建students表(id、name、age、high、gender、cls_id)
+create table students(
+    id int unsigned not null auto_increment primary key,
+    name varchar(30),
+    age tinyint unsigned default 0,
+    high decimal(5,2),
+    gender enum("男", "女", "中性", "保密") default "保密",
+    cls_id int unsigned
+)
 
 -- 创建教师表
 create table tb_teacher
@@ -485,6 +634,21 @@ unique (sid, cid)
   
   ```mysql
 insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
+  
+  -- 主键字段 可以用 0  null   default 来占位
+  insert into students values(0, "小李飞刀", 20, "女", 1, "1990-01-01");
+  insert into students values(null, "小李飞刀", 20, "女", 1, "1990-01-01");
+  insert into students values(default, "小李飞刀", 20, "女", 1, "1990-01-01");
+  
+  -- 枚举中 的 下标从1 开始 1---“男” 2--->"女"....
+  insert into students values(default, "小李飞刀", 20, 1, 1, "1990-02-01");
+  
+  -- 部分插入
+  insert into students (name, gender) values ("小乔", 2);
+  
+  -- 多行插入
+  insert into students (name, gender) values ("大乔", 2),("貂蝉", 2);
+  insert into students values(default, "西施", 20, "女", 1, "1990-01-01"), (default, "王昭君", 20, "女", 1, "1990-01-01");
   ```
   
   - <font color=red>*Ignore* </font>忽略插入与表内UNIQUE字段都相同的记录
@@ -518,6 +682,8 @@ insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
 
   ```mysql
   alter table students change name name char(16) not null;
+  -- 或者
+  alter table students modify name char(16) not null;
   ```
 
 - 重命名表
@@ -553,6 +719,8 @@ insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
 
   ```mysql
   drop database samp_db;
+  -- 带有"-"的两边要加上``符号，否则会报错
+  drop database `python-04`;
   ```
 
 - 删除整张表
@@ -579,30 +747,6 @@ insert IGNORE into students (name, sex, age) values("孙丽华", "女", 21);
 
   ```mysql
   alter table students drop birthday;
-  ```
-
-------
-
-### 2.5 视图
-
-- 视图本质就是对查询的一个封装
-
-- 定义视图
-
-  ```mysql
-  create view stuscore as 
-  select students.*,scores.score from scores
-  inner join students on scores.stuid=students.id;
-  ```
-
-  ```mysql
-  Create view v_emp(v_name,v_age,v_phone) as select name,age,phone from employee;
-  ```
-
-- 视图的用途就是查询
-
-  ```mysql
-  select * from stuscore;
   ```
 
 ------
@@ -668,7 +812,7 @@ cursor1=conn.cursor()
 * rowcount只读属性，表示最近一次execute()执行后受影响的行数
 * connection获得当前连接对象
 
-### 3.2 增改删
+### 3.2 增改删查
 
 #### 3.2.1 增
 
@@ -940,4 +1084,138 @@ helper=MysqlHelper('localhost',3306,'test1','root','mysql')
 one=helper.get_one(sql)
 print one
 ```
+
+------
+
+## 4 MySQL高级
+
+### 4.1 视图
+
+- 视图本质就是对查询的一个封装，就是一条SELECT语句执行后返回的结果集。视图是对若干张基本表的引用，一张虚表，查询语句执行的结果
+
+- 定义视图
+
+  ```mysql
+  create view stuscore as 
+  select students.*,scores.score from scores
+  inner join students on scores.stuid=students.id;
+  ```
+
+  ```mysql
+  Create view v_emp(v_name,v_age,v_phone) as select name,age,phone from employee;
+  ```
+
+- 视图的用途就是查询
+
+  ```mysql
+  select * from stuscore;
+  ```
+
+### 4.2 事务
+
+#### 4.2.1 概念
+
+数据库中的事务是指对数据库执行一批操作，这些操作最终要么全部执行成功，要么全部失败，不会存在部分成功的情况
+
+#### 4.2.2 四大特性（ACID）
+
+- 原子性(Atomicity)
+
+> 事务的整个过程如原子操作一样，最终要么全部成功，或者全部失败，这个原子性是从最终结果来看的，从最终结果来看这个过程是不可分割的。
+
+- 一致性(Consistency)
+
+> 事务开始之前、执行中、执行完毕，这些时间点，多个人去观察事务操作的数据的时候，看到的数据都是一致的，比如在事务操作过程中，A连接看到的是100，那么B此时也去看的时候也是100，不会说AB看到的数据不一样，他们在某个时间点看到的数据是一致的。
+
+- 隔离性(Isolation)
+
+> 通常来说，一个事务所做的修改在最终提交以前，对其他事务是不可见的。（在前面的例子中，当执行完第三条语句、第四条语句还未开始时，此时有另外的一个账户汇总程序开始运行，则其看到支票帐户的余额并没有被减去200美元。）
+
+- 持久性(Durability)
+
+> 一旦事务提交，则其所做的修改会永久保存到数据库。（此时即使系统崩溃，修改的数据也不会丢失。）
+
+#### 4.2.3 MySQL事务操作
+
+mysql中事务默认是隐式事务，执行insert、update、delete操作的时候，数据库自动开启事务、提交或回滚事务
+
+是否开启隐式事务是由变量`autocommit`控制的。
+
+所以事务分为**隐式事务**和**显式事务。**
+
+- **隐式事务**
+
+> 事务自动开启、提交或回滚，比如insert、update、delete语句，事务的开启、提交或回滚由mysql内部自动控制的。
+
+查看变量`autocommit`是否开启了自动提交
+
+```mysql
+-- autocommit为ON表示开启了自动提交。
+show variables like 'autocommit';
+```
+
+- **显式事务**
+
+> 事务需要手动开启、提交或回滚，由开发者自己控制。
+
+两种方式手动控制：
+
+语法：
+
+```mysql
+-- 方法一
+//设置不自动提交事务
+set autocommit=0;
+//执行事务操作
+commit|rollback;
+
+-- 方法二
+begin/start transaction;//开启事务
+//执行事务操作
+commit|rollback;
+```
+
+### 4.3 索引
+
+### 4.4 账户管理
+
+#### 4.4.1 授予权限
+
+##### 4.4.1.1 查看所有用户
+
+- 所有用户及权限信息存储在mysql数据库的user表中
+- 查看user表的结构
+
+```mysql
+desc user;
+```
+
+主要字段说明：
+
+- Host表示允许访问的主机
+- User表示用户名
+- authentication_string表示密码，为加密后的值
+
+查看所有用户：
+
+```mysql
+select host,user,authentication_string from user;
+```
+
+##### 4.4.1.2 创建账户、授权
+
+- 需要使用实例级账户登录后操作，以root为例
+- 常用权限主要包括：create、alter、drop、insert、update、delete、select
+- 如果分配所有权限，可以使用all privileges
+
+1. 创建账户&授权
+
+```mysql
+grant 权限列表 on 数据库 to '用户名'@'访问主机' identified by '密码';
+```
+
+2. 示例1
+3. 
+
+#### 4.4.2 账户操作
 

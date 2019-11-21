@@ -1,4 +1,4 @@
-﻿# 42-虚拟环境(创建/激活/操作/删除-virtualenv、Pycharm、virtualenvwrapper、pipenv)
+# 42-虚拟环境(创建/激活/操作/删除-virtualenv、Pycharm、virtualenvwrapper、pipenv)
 
 标签（空格分隔）： python
 
@@ -17,7 +17,13 @@ virtualenv ENV
  - cd 到存放虚拟环境的的地址
  - 执行命令virtualenv ENV，创建名为ENV 的虚拟环境
 ```python
+% cd /Users/xxx/Desktop/testvirtuals                    
 
+% virtualenv virtual1                   
+Using base prefix '/usr/local/Cellar/python3/3.6.4_1/Frameworks/Python.framework/Versions/3.6'
+New python executable in /Users/xxx/Desktop/testvirtuals/virtual1/bin/python3.6
+Also creating executable in /Users/xxx/Desktop/testvirtuals/virtual1/bin/python
+Installing setuptools, pip, wheel...done.
 ```
 
 #### 2.1.2 指定 Python 版本创建虚拟环境
@@ -27,7 +33,18 @@ virtualenv ENV
 virtualenv -p /usr/local/bin/python2.7 ENV
 ```
 
+执行效果
+
+```python
+$ virtualenv -p /usr/local/bin/python2.7 ENV
+Running virtualenv with interpreter /usr/local/bin/python2.7
+New python executable in /Users/minyu_leung/Desktop/virtual2/ENV/bin/python2.7
+Also creating executable in /Users/minyu_leung/Desktop/virtual2/ENV/bin/python
+Installing setuptools, pip, wheel...done.
+```
+
 #### 2.1.3 是否继承系统三方库 `--system-site-packages`
+
 添加参数--system-site-packages，项目检索库的时候，也会到系统的三方库中找
 不添加时，默认只到虚拟环境中查找库
 ```python
@@ -41,17 +58,17 @@ virtualenv --system-site-packages ENV
  - 验证当前确实在已激活的虚拟环境中，执行命令 pip --version 和 pip list
  - 退出虚拟环境，在激活的虚拟环境中，执行命令 deactivate
  - 验证已经退出，执行命令 pip --version 和 pip list
- 
+
 ### 2.3 项目交接
  - 冻结项目需求文本 pip freeze > requirements.txt
  - 根据需求文本，安装项目依赖库 pip install -r requirements.txt （在激活的虚拟环境中）
- 
+
 ## 3 虚拟环境进阶使用
 ### 3.1  集中式虚拟环境管理
  1. 通过virtualenvwrapper创建的虚拟环境都会统一存放到指定位置统一管理
  2. 方便在多个虚拟环境间切换
  3. 更加方便的去使用 virtualenv
- 
+
 * 更加方便的去使用 virtualenv
 mkvirtualenv venv1
 * 快速在多个虚拟环境中切换
@@ -97,5 +114,5 @@ pipenv shell
  安装包
 pipenv install requests
 注意：不要使用 pip install 命令，使用的话虽然可以在虚拟环境中安装对应的包，但是不会更新 PIPfile 和 PIPfile.lock
- 
+
  2. 列表项
