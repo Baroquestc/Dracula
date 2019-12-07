@@ -6,7 +6,7 @@
 
 1. 现在若想回到某一个版本，可以使用如下命令：
 
-```git
+```bash
         git reset --hard HEAD^
 ```
 

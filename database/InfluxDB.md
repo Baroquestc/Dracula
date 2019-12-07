@@ -57,7 +57,7 @@ insert disk_free,hostname=server01 value=442221834240i 1435362189575692182
 # value=xx：记录值，记录值可以有多个，最后是指定的时间
 ```
  - 删除表
-```python
+```
 > drop measurement disk_free
 ```
 
