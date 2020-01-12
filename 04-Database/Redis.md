@@ -46,8 +46,6 @@ NoSQL：一类新出现的数据库(not only sql)，它的特点：
 
   > wget http://download.redis.io/releases/redis-3.2.8.tar.gz
 
-  ![下载](https://tva1.sinaimg.cn/large/006tNbRwly1g9h6dje0uvj30k806fwfo.jpg)
-
 - step2:解压
 
   > tar -zxvf redis-3.2.8.tar.gz
@@ -70,7 +68,17 @@ NoSQL：一类新出现的数据库(not only sql)，它的特点：
 
   注意：
 
-  
+  > 报错：[You need tcl 8.5 or newer in order to run the Redis test](https://www.cnblogs.com/cxbhakim/p/9150953.html)
+
+```bash
+# 解决方法
+[root@etcd3 tmp]# wget http://downloads.sourceforge.net/tcl/tcl8.6.1-src.tar.gz
+[root@etcd3 tmp]# tar xzvf tcl8.6.1-src.tar.gz  -C /usr/local/
+[root@etcd3 tmp]# cd  /usr/local/tcl8.6.1/unix/
+[root@etcd3 unix]# ./configure
+[root@etcd3 unix]# make
+[root@etcd3 unix]# make install
+```
 
 - step7:安装,将redis的命令安装到/usr/local/bin/⽬录
 
@@ -225,7 +233,7 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
   > set key value
 
-- 例1：设置键为name值为itcast的数据
+  例1：设置键为name值为itcast的数据
 
   > set name itcast
 
@@ -235,9 +243,10 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
   > setex key seconds value
 
-- 例2：设置键为aa值为aa过期时间为3秒的数据
+  例2：设置键为aa值为aa过期时间为3秒的数据
 
   > setex aa 3 aa
+
 
 ![设置过期时间](https://tva1.sinaimg.cn/large/006tNbRwly1g9hg4uewsnj307n02st8k.jpg)
 
@@ -245,9 +254,10 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
   > mset key1 value1 key2 value2 ...
 
-- 例3：设置键为'a1'值为'python'、键为'a2'值为'java'、键为'a3'值为'c'
+  例3：设置键为'a1'值为'python'、键为'a2'值为'java'、键为'a3'值为'c'
 
   > mset a1 python a2 java a3 c
+
 
 ![设置多值](https://tva1.sinaimg.cn/large/006tNbRwly1g9hg6xxefkj30b404egls.jpg)
 
@@ -255,9 +265,10 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
   > append key value
 
-- 例4：向键为a1中追加值' haha'
+  例4：向键为a1中追加值' haha'
 
   > append 'a1' 'haha'
+
 
 ![追加值](https://tva1.sinaimg.cn/large/006tNbRwly1g9hg7hkra6j307s020dfp.jpg)
 
@@ -267,11 +278,33 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
   > mget key1 key2 ...
 
-- 例6：获取键a1、a2、a3'的值
+  例5：获取键a1、a2、a3'的值
 
   > mget a1 a2 a3
 
-![获取多值](https://tva1.sinaimg.cn/large/006tNbRwly1g9hg91ufrkj30b404egls.jpg)
+
+- 获取值长度
+
+> STRLEN key
+
+#### 5.1.3 运算
+
+- 要求：值是数字
+- 将key对应的value加1
+
+> INCR key
+
+- 将key对应的value加整数
+
+> INCRBY key increment
+
+- 将key对应的value减1
+
+> DECR key
+
+- 将key对应的value减整数
+
+> DECRBY key decrement
 
 ### 5.2 键命令
 
@@ -339,9 +372,7 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
 - 设置单个属性
 
-```
-hset key field value
-```
+> HSET key field value
 
 设置键 user的属性name为itheima
 
@@ -380,6 +411,30 @@ hset key field value
 - 获取键u2属性'name'、'age的值
 
   > hmget u2 name age
+
+4. 获取所有属性和值
+
+> HGETALL key
+
+5. 获取所有的属性
+
+> HKEYS key
+
+6. 返回包含属性的个数
+
+> HLEN key
+
+7. 获取所有值
+
+> HVALS key
+
+8. 返回值的字符串长度
+
+> HSTRLEN key field
+
+9. 判断属性是否存在
+
+> HEXISTS key field
 
 #### 5.3.3 删除
 
@@ -500,9 +555,13 @@ lrange a2 0 -1
 
 #### 5.5.2 获取
 
-返回所有的元素
+- 返回所有的元素
 
 > smembers key   
+
+- 返回集合元素个数
+
+> SCARD key
 
 #### 5.5.3 删除
 
@@ -515,6 +574,24 @@ lrange a2 0 -1
   ```
   srem a3 wangwu
   ```
+
+#### 5.5.4 其他
+
+- 求多个集合的交集
+
+> SINTER key [key ...]
+
+- 求某集合与其它集合的差集
+
+> SDIFF key [key ...]
+
+- 求多个集合的合集
+
+> SUNION key [key ...]
+
+- 判断元素是否在集合中
+
+> SISMEMBER key member
 
 ### 5.6 zset
 
@@ -597,6 +674,21 @@ zremrangebyscore a4 5 6
 ```
 
 ## 6 与python交互
+
+- pip安装
+
+```bash
+sudo pip install redis
+```
+
+- 源码安装
+
+```bash
+wget https://github.com/andymccurdy/redis-py/archive/master.zip
+unzip master.zip
+cd redis-py-master
+sudo python setup.py install
+```
 
 ### 6.1 方法
 
