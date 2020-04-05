@@ -6,12 +6,6 @@
 
 1. 简介
 
-可以使用下面的命令查看已经安装的MySQL相关的包。
-
-```Shell
-rpm -qa | grep mysql
-```
-
 * 启动MySQL服务。
 
   启动MySQL成功后，可以通过下面的命令来检查网络端口使用情况，MySQL默认使用3306端口。
@@ -32,19 +26,17 @@ rpm -qa | grep mysql
   cat /var/log/mysqld.log | grep password
   ```
 
-  上面的命令会查看MySQL的日志带有password的行，在显示的结果中`root@localhost:`后面的部分就是默认设置的初始密码。
-
   修改超级管理员（root）的访问口令为`123456`。
 
   ```python
-  set global validate_password_policy=0;
+set global validate_password_policy=0;
   set global validate_password_length=6;
   alter user 'root'@'localhost' identified by '123456';
   ```
 
 2. 常用命令。
 
-   * 查看服务器版本。
+   * 查看服务器版本（前提进入mysql交互命令下）。
 
      ```mysql
      select version();
@@ -56,7 +48,7 @@ rpm -qa | grep mysql
      select database();
      ```
      
-   * 查看表的结构
+   * 查看表的结构（重点记忆）
    
      ```mysql
      desc 表名;
