@@ -210,6 +210,8 @@ redis配置信息http://blog.csdn.net/ljphilp/article/details/52934933
 
 ## 5 数据操作
 
+- [命令参考文档](http://doc.redisfans.com/)
+
 - redis是key-value的数据，所以每个数据都是一个键值对
 - 键的类型是字符串
 - 值的类型分为五种：
@@ -925,6 +927,10 @@ if __name__=="__main__":
 
 ![slave读数据](https://tva1.sinaimg.cn/large/006tNbRwly1g9jaa3tm4wj30b404egls.jpg)
 
+### 7.3 Django原理图
+
+![image.png](https://ae01.alicdn.com/kf/H728ce50945894fab8f4b6c55087b94c0R.png)
+
 ## 8 搭建集群
 
 - 分类
@@ -932,7 +938,239 @@ if __name__=="__main__":
     - 只有一台电脑，在这一台电脑上启动了多个redis服务。
   - 硬件层面
     - 存在多台实体的电脑，每台电脑上都启动了一个redis或者多个redis服务。
-
 - redis集群搭建http://www.cnblogs.com/wuxl360/p/5920330.html
+
+![image.png](https://ae05.alicdn.com/kf/H81c0b9228f684d3fab9926096514a36bT.png)
+
 - [Python]搭建redis集群http://blog.5ibc.net/p/51020.html
 
+### 8.1 配置机器1
+
+- 在演示中，172.16.179.130为当前ubuntu机器的ip
+
+- 在172.16.179.130上进⼊Desktop⽬录，创建conf⽬录
+
+- 在conf⽬录下创建⽂件7000.conf，编辑内容如下
+
+  ```
+  port 7000
+  bind 172.16.179.130
+  daemonize yes
+  pidfile 7000.pid
+  cluster-enabled yes
+  cluster-config-file 7000_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 在conf⽬录下创建⽂件7001.conf，编辑内容如下
+
+  ```
+  port 7001
+  bind 172.16.179.130
+  daemonize yes
+  pidfile 7001.pid
+  cluster-enabled yes
+  cluster-config-file 7001_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 在conf⽬录下创建⽂件7002.conf，编辑内容如下
+
+  ```
+  port 7002
+  bind 172.16.179.130
+  daemonize yes
+  pidfile 7002.pid
+  cluster-enabled yes
+  cluster-config-file 7002_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 总结：三个⽂件的配置区别在port、pidfile、cluster-config-file三项
+
+- 使⽤配置⽂件启动redis服务
+
+  ```
+  redis-server 7000.conf
+  redis-server 7001.conf
+  redis-server 7002.conf
+  ```
+
+- 查看进程如下图
+
+  ![image.png](https://ae04.alicdn.com/kf/H133754f46b474ebabd2e4d5c42c01b4bB.png)
+
+### 8.2 配置机器2
+
+- 在演示中，172.16.179.131为当前ubuntu机器的ip
+
+- 在172.16.179.131上进⼊Desktop⽬录，创建conf⽬录
+
+- 在conf⽬录下创建⽂件7003.conf，编辑内容如下
+
+  ```
+  port 7003
+  bind 172.16.179.131
+  daemonize yes
+  pidfile 7000.pid
+  cluster-enabled yes
+  cluster-config-file 7000_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 在conf⽬录下创建⽂件7004.conf，编辑内容如下
+
+  ```
+  port 7004
+  bind 172.16.179.131
+  daemonize yes
+  pidfile 7001.pid
+  cluster-enabled yes
+  cluster-config-file 7001_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 在conf⽬录下创建⽂件7005.conf，编辑内容如下
+
+  ```
+  port 7005
+  bind 172.16.179.131
+  daemonize yes
+  pidfile 7002.pid
+  cluster-enabled yes
+  cluster-config-file 7002_node.conf
+  cluster-node-timeout 15000
+  appendonly yes
+  ```
+
+- 总结：三个⽂件的配置区别在port、pidfile、cluster-config-file三项
+
+- 使⽤配置⽂件启动redis服务
+
+  ```
+  redis-server 7003.conf
+  redis-server 7004.conf
+  redis-server 7005.conf
+  ```
+
+- 查看进程如下图
+
+![image.png](https://ae05.alicdn.com/kf/H800821f6bf4f49f286bea9e074b99eb0u.png)
+
+### 8.3 创建集群
+
+- redis的安装包中包含了redis-trib.rb，⽤于创建集群
+
+- 接下来的操作在172.16.179.130机器上进⾏
+
+- 将命令复制，这样可以在任何⽬录下调⽤此命令
+
+  ```
+  sudo cp /usr/share/doc/redis-tools/examples/redis-trib.rb /usr/local/bin/
+  ```
+
+- 安装ruby环境，因为redis-trib.rb是⽤ruby开发的
+
+  > sudo apt-get install ruby
+
+- 在提示信息处输⼊y，然后回⻋继续安装
+
+![image.png](https://ae05.alicdn.com/kf/Haecb95f8d9634a0f8afd2b4d0d9f9830W.png)
+
+- 运⾏如下命令创建集群
+
+  ```
+  redis-trib.rb create --replicas 1 172.16.179.130:7000 172.16.179.130:7001 172.16.179.130:7002 172.16.179.131:7003 172.16.179.131:7004 172.16.179.131:7005
+  ```
+
+- 执⾏上⾯这个指令在某些机器上可能会报错,主要原因是由于安装的 ruby 不是最 新版本
+
+- 天朝的防⽕墙导致⽆法下载最新版本,所以需要设置 gem 的源
+
+- 解决办法如下
+
+  ```
+  -- 先查看⾃⼰的 gem 源是什么地址
+  gem source -l -- 如果是https://rubygems.org/ 就需要更换
+  -- 更换指令为
+  gem sources --add https://gems.ruby-china.org/ --remove https://rubygems.org/
+  -- 通过 gem 安装 redis 的相关依赖
+  sudo gem install redis
+  -- 然后重新执⾏指令
+  ```
+
+![image.png](https://ae02.alicdn.com/kf/Heaa43fe411e1415e9f05e9f61426b80eG.png)
+
+- ```
+  redis-trib.rb create --replicas 1 172.16.179.130:7000 172.16.179.130:7001 172.16.179.130:7002 172.16.179.131:7003 172.16.179.131:7004 172.16.179.131:7005
+  ```
+
+- 提示如下主从信息，输⼊yes后回⻋
+
+![image.png](https://ae05.alicdn.com/kf/H75f135531950430b8a83c481e183fe4bD.png)
+
+- 提示完成，集群搭建成功
+
+```数据验证```
+
+- 根据上图可以看出，当前搭建的主服务器为7000、7001、7003，对应的从服务器是7004、7005、7002
+
+- 在192.168.12.107机器上连接7002，加参数-c表示连接到集群
+
+  > redis-cli -h 192.168.12.107 -c -p 7002
+
+- 写⼊数据
+
+  > set name itheima
+
+- ⾃动跳到了7003服务器，并写⼊数据成功
+
+![image.png](https://ae05.alicdn.com/kf/H47470cdcf1b64adaad1d2d8820c5b3f9d.png)
+
+- 在7003可以获取数据，如果写入数据又重定向到7000(负载均衡)
+
+![image.png](https://ae02.alicdn.com/kf/H3bd8d0bd2d4a4fbd87bc6b7124d9a451l.png)
+
+```在哪个服务器上写数据：CRC16```
+
+- redis cluster在设计的时候，就考虑到了去中⼼化，去中间件，也就是说，集群中 的每个节点都是平等的关系，都是对等的，每个节点都保存各⾃的数据和整个集 群的状态。每个节点都和其他所有节点连接，⽽且这些连接保持活跃，这样就保 证了我们只需要连接集群中的任意⼀个节点，就可以获取到其他节点的数据
+- Redis集群没有并使⽤传统的⼀致性哈希来分配数据，⽽是采⽤另外⼀种叫做哈希 槽 (hash slot)的⽅式来分配的。redis cluster 默认分配了 16384 个slot，当我们 set⼀个key 时，会⽤CRC16算法来取模得到所属的slot，然后将这个key 分到哈 希槽区间的节点上，具体算法就是：CRC16(key) % 16384。所以我们在测试的 时候看到set 和 get 的时候，直接跳转到了7000端⼝的节点
+- Redis 集群会把数据存在⼀个 master 节点，然后在这个 master 和其对应的salve 之间进⾏数据同步。当读取数据时，也根据⼀致性哈希算法到对应的 master 节 点获取数据。只有当⼀个master 挂掉之后，才会启动⼀个对应的 salve 节点，充 当 master
+- 需要注意的是：必须要3个或以上的主节点，否则在创建集群时会失败，并且当存 活的主节点数⼩于总节点数的⼀半时，整个集群就⽆法提供服务了
+
+### 8.4 Python交互
+
+- 安装包如下
+
+  > pip install redis-py-cluster
+
+- redis-py-cluster源码地址https://github.com/Grokzen/redis-py-cluster
+
+- 创建⽂件redis_cluster.py，示例码如下
+
+  ```python
+  from rediscluster import *
+  if __name__ == '__main__':
+    try:
+        # 构建所有的节点，Redis会使⽤CRC16算法，将键和值写到某个节点上
+        startup_nodes = [
+            {'host': '192.168.26.128', 'port': '7000'},
+            {'host': '192.168.26.130', 'port': '7003'},
+            {'host': '192.168.26.128', 'port': '7001'},
+        ]
+        # 构建StrictRedisCluster对象
+        src=StrictRedisCluster(startup_nodes=startup_nodes,decode_responses=True)
+        # 设置键为name、值为itheima的数据
+        result=src.set('name','itheima')
+        print(result)
+        # 获取键为name
+        name = src.get('name')
+        print(name)
+    except Exception as e:
+        print(e)
+  ```
