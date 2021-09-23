@@ -75,7 +75,7 @@ cv2.imshow('cat_crop',img_crop)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200730013031909.png)
 
-## 颜色通道提取、组合
+### 颜色通道提取、组合
 
 -   split 分离颜色通道
 -   merge 组合颜色通道(注 两个括号)
@@ -137,7 +137,7 @@ plt.show()
 
 -   cv2.resize(img, (新img的宽, 高)) 融合两张图的前提是尺寸一致
 
-```
+```python
 import cv2
 img_cat = cv2.imread('cat.jpg')  
 img_dog = cv2.imread('dog.jpg')
@@ -149,7 +149,7 @@ cv2.imshow('cat_dog',cat_dog)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200730031815815.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
 
-```
+```python
 import matplotlib.pyplot as plt
 
 big_cat = cv2.resize(img_cat,(0,0),fx=4,fy=4)
@@ -163,7 +163,7 @@ plt.show()
 
 -   cv2.addWeighted 就相当于α \* X1 + β \* X2 + b，α=0.4，β=0.6，分别是两张图片的权重，以这样的形式融合
 
-```
+```python
 res = cv2.addWeighted(img_cat,0.4,img_dog,0.6,0)
 cv_show('res',res)
 ```
@@ -173,7 +173,7 @@ cv_show('res',res)
 -   cv2.VideoCapture可以捕获摄像头，用数字来控制不同的设备，例如0,1。
 -   如果是视频文件，直接指定好路径即可。
 
-```
+```python
 import cv2
 vc = cv2.VideoCapture('test.mp4')
 
@@ -216,7 +216,7 @@ ret, dst = cv2.threshold(src, thresh, maxval, type)
     -   dst： 输出图
     -   thresh： 阈值
 
-```
+```python
 import cv2
 import matplotlib.pyplot as plt
 img = cv2.imread('cat.jpg')
@@ -245,7 +245,7 @@ plt.show()
 -   cv2.GaussianBlur # 高斯滤波：高斯模糊的卷积核里的数值是满足高斯分布，相当于更重视中间的
 -   cv2.medianBlur # 中值滤波：相当于用中值代替
 
-```
+```python
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -257,11 +257,6 @@ median = cv2.medianBlur(img,5)
 
 titles = ['Original','Binary','Binary_INV','TRUNC','ZERO','ZERO_INV']
 images = [img,blur,boxFilter,gussian,median]
-
-
-
-
-
 
 res = np.hstack((blur,gussian,median))
 cv2.imshow('median vs average', res)
@@ -315,7 +310,7 @@ cv_show('dige and erode and dilate',res)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200731020842799.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70#pic_center)
 
-```
+```python
 pie = cv2.imread('pie.png')
 kernel = np.ones((30,30),np.uint8) 
 erosion_1 = cv2.erode(pie,kernel,iterations = 1)
@@ -342,7 +337,7 @@ cv2.destroyAllWindows()
 -   开：先腐蚀，再膨胀
 -   闭：先膨胀，再腐蚀
 
-```
+```python
 import cv2
 import numpy as np
 img = cv2.imread('dige.png')
@@ -413,7 +408,7 @@ y轴方向的算子如Gy， 对于x轴方向上，即左右两边的比较（下
 计算方程为：x轴： p3 - p1 + 2 \* p6 - 2 \* p4 + p9 - p7， 右边的像素值减去左边的像素值  
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200731234028464.png)
 
-```
+```python
 import cv2
 import matplotlib.pyplot as plt
 img = cv2.imread('pie.png',cv2.IMREAD_GRAYSCALE)
@@ -455,7 +450,7 @@ Lena图像的sobel水平竖直方向的操作效果
 
 Scharr算子和Sobel算子的用法相同，Laplacian算子就不存在x y了
 
-```
+```python
 img = cv2.imread('lena.jpg',cv2.IMREAD_GRAYSCALE)
 sobelx = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=3)
 sobely = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=3)
@@ -481,7 +476,7 @@ cv_show(res,'res')
 
 ## Canny边缘检测
 
-```
+```python
 img=cv2.imread("lena.jpg",cv2.IMREAD_GRAYSCALE)
 
 v1=cv2.Canny(img,80,150)
@@ -493,7 +488,7 @@ cv_show(res,'Canny_res')
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020080101352653.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
 
-```
+```python
 img=cv2.imread("car.png",cv2.IMREAD_GRAYSCALE)
 v1=cv2.Canny(img,120,250)
 v2=cv2.Canny(img,50,100)
@@ -519,11 +514,11 @@ cv_show(res,'res')
 **向上采样**的缺失信息(生成拉普拉斯金字塔)的具体操作为：从小到大  
 　　　　1. 首先将维数扩大两倍  
 　　　　2. 将扩大位的值置为0  
-　　　　　　　　3. 对新的图像进行高斯卷积  
-　　　　　　　　4. 用新的层次的高斯金字塔减去 3 中形成的图像  
-　　　　　　　　![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806123741540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
+　　　　　　　　　　　　3. 对新的图像进行高斯卷积  
+　　　　　　　　　　　　　　　　4. 用新的层次的高斯金字塔减去 3 中形成的图像  
+　　　　　　　　　　　　　　　　　　　　　　　　![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806123741540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
 
-```
+```python
 import cv2
 import numpy as np
 img = cv2.imread('AM.png')
@@ -539,7 +534,7 @@ cv2.destroyAllWindows()
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806125512749.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)  
 先上采样，再下采样，不能恢复原图的清晰度
 
-```
+```python
 up=cv2.pyrUp(img)
 up_down=cv2.pyrDown(up)
 cv_show(up_down,'up_down')
@@ -590,7 +585,7 @@ cv_show(img-up_down,'img-up_down')
 > 查看opencv版本：print(cv2.**version**)  
 > 我的opecv版本为： 4.2.0
 
-```
+```python
 img = cv2.imread('contours.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
@@ -616,7 +611,7 @@ cv2.drawContours
 
 ### 轮廓特征
 
-```
+```python
 cnt = contours[0]
 
 cv2.contourArea(cnt)
@@ -642,7 +637,7 @@ cv2.arcLength(cnt,True)
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020080616111014.png)
 
-```
+```python
 img = cv2.imread('contours2.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 ret, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
@@ -691,7 +686,7 @@ cv_show('res',np.hstack((approx1_res,approx2_res,approx3_res)))
     lineType： 圆边界的类型。  
     shift：中心坐标和半径值中的小数位数。
 
-```
+```python
 
 img = cv2.imread('contours.png')
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -710,7 +705,7 @@ extent = float(area) / rect_area
 
 ```
 
-```
+```python
 
 cnt_8 = contours[8]
 (x,y),radius = cv2.minEnclosingCircle(cnt_8) 
@@ -749,7 +744,7 @@ cv_show('img_cir',img_cir)
     输入矩阵res  
     min\_val, max\_val, min\_loc, max\_loc是这个矩阵的最小值，最大值，最大值的索引，最小值的索引
 
-```
+```python
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
@@ -793,7 +788,7 @@ for meth in methods:
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806215409278.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)  
 **匹配多个对象**
 
-```
+```python
 img_rgb = cv2.imread('mario.jpg')
 img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
 template = cv2.imread('mario_coin.jpg', 0)
@@ -822,7 +817,7 @@ cv2.waitKey(0)
     histSize:BIN 的数目。也应用中括号括来  
     ranges: 像素值范围常为 \[0-256\]
 
-```
+```python
 import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -843,7 +838,7 @@ plt.show()
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200810012609815.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)  
 分别显示3个颜色通道的直方图
 
-```
+```python
 img = cv2.imread('cat.jpg') 
 color = ('b','g','r')
 for i,col in enumerate(color): 
@@ -856,7 +851,7 @@ for i,col in enumerate(color):
 
 ### mask 操作
 
-```
+```python
 img = cv2.imread('cat.jpg', 0)
 
 
@@ -922,7 +917,7 @@ opencv中主要就是 **cv2.dft()** 和 **cv2.idft()** ，输入图像需要**�
 得到的结果中频率为0的部分会在左上角，通常要转换到中心位置，可以通过shift变换来实现。  
 cv2.dft()返回的结果是双通道的（实部，虚部），通常还需要转换成图像格式才能展示（0,255）, 用逆变换cv2.idft()。
 
-```
+```python
 img = cv2.imread('lena.jpg',0)
 
 img_float32 = np.float32(img)
@@ -944,7 +939,7 @@ plt.show()
 
 ### 低通滤波
 
-```
+```python
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
@@ -987,7 +982,7 @@ plt.show()
 仅mask\[crow-30:crow+30, ccol-30:ccol+30\] = 0与上面不同  
 因为保留高频
 
-```
+```python
 img = cv2.imread('lena.jpg',0)
 img_float32 = np.float32(img)
 
