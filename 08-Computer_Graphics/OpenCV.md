@@ -163,7 +163,7 @@ plt.show()
 
 -   cv2.addWeighted 就相当于α \* X1 + β \* X2 + b，α=0.4，β=0.6，分别是两张图片的权重，以这样的形式融合
 
-```
+```python
 res = cv2.addWeighted(img_cat,0.4,img_dog,0.6,0)
 cv_show('res',res)
 ```
@@ -519,9 +519,9 @@ cv_show(res,'res')
 **向上采样**的缺失信息(生成拉普拉斯金字塔)的具体操作为：从小到大  
 　　　　1. 首先将维数扩大两倍  
 　　　　2. 将扩大位的值置为0  
-　　　　　　　　3. 对新的图像进行高斯卷积  
-　　　　　　　　4. 用新的层次的高斯金字塔减去 3 中形成的图像  
-　　　　　　　　![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806123741540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
+　　　　　　　　　　　　3. 对新的图像进行高斯卷积  
+　　　　　　　　　　　　　　　　4. 用新的层次的高斯金字塔减去 3 中形成的图像  
+　　　　　　　　　　　　　　　　　　　　　　　　![在这里插入图片描述](https://img-blog.csdnimg.cn/20200806123741540.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3NpbmF0XzI5OTUwNzAz,size_16,color_FFFFFF,t_70)
 
 ```
 import cv2
