@@ -59,6 +59,10 @@ docker ps –a # 查看所有容器
 docker run 参数
 ```
 
+```bash
+nvidia-docker run -it --name openpose -v /home/shcd/Documents/gby:/gby --gpus all   90be7604e476
+```
+
 参数说明：
 
 ​	•-i：保持容器运行。通常与 -t 同时使用。加入it这两个参数后，容器创建后自动进入容器中，退出容器后，容器自动关闭。
@@ -73,31 +77,39 @@ docker run 参数
 
 - 进入容器
 
-```
+```bash
 docker exec 参数 # 退出容器，容器不会关闭
 ```
 
+```bash
+docker attach container-id
+```
+
+想退出但是保持容器运行：按`CTRL+Q+P`三个键 - 退出，并关闭停止容器，按`CTRL+D`或者输入`exit`再回车
+
+容器的停止、重启： `docker stop container-id` `docker restart container-id`
+
 - 停止容器
 
-```
+```bash
 docker stop 容器名称
 ```
 
 - 启动容器
 
-```
+```bash
 docker start 容器名称
 ```
 
 - 删除容器:容器必须停止才能删除
 
-```
+```bash
 docker rm 容器名称
 ```
 
 - 查看容器信息
 
-```
+```bash
 docker inspect 容器名称
 ```
 
@@ -419,7 +431,7 @@ Linux文件系统由bootfs和rootfs两部分组成
 
 ### 8.2 容器转镜像
 
-```
+```bash
 docker commit 容器id 镜像名称:版本号
 
 docker save -o 压缩文件名称 镜像名称:版本号
