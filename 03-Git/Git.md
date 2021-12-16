@@ -16,13 +16,13 @@
 
 可以使用如下命令：
 
-```
+```bash
         git reset --hard 版本号
 ```
 
 3. 终端关闭回退
 
-```
+```bash
 git reflog
 ```
 
@@ -45,14 +45,12 @@ git reflog
 
 查看分支：git branch
 
-```
+```bash
 # 查看远程分支
 git branch -r
 # 查看本地和远程分支
 git branch -a
 ```
-
-
 
 创建分支：git branch <name>
 
@@ -78,8 +76,8 @@ git branch -a
 
 如果要强制禁用`Fast forward`模式，Git就会在merge时生成一个新的commit，这样，从分支历史上就可以看出分支信息。
 
-```
-$ git merge --no-ff -m "merge with no-ff" dev
+```bash
+git merge --no-ff -m "merge with no-ff" dev
 ```
 
 `-m`参数，把commit描述写进去。
@@ -88,8 +86,8 @@ $ git merge --no-ff -m "merge with no-ff" dev
 
 多次stash，恢复的时候，先用`git stash list`查看，然后恢复指定的stash，用命令：
 
-```
-$ git stash apply stash@{0}
+```bash
+git stash apply stash@{0}
 ```
 
 修复bug时，我们会通过创建新的bug分支进行修复，然后合并，最后删除；
@@ -108,17 +106,17 @@ $ git stash apply stash@{0}
 
 于是准备开发：
 
-```
-$ git switch -c feature-vulcan
+```bash
+git switch -c feature-vulcan
 Switched to a new branch 'feature-vulcan'
 ```
 
 5分钟后，开发完毕：
 
-```
-$ git add vulcan.py
+```bash
+git add vulcan.py
 
-$ git status
+git status
 On branch feature-vulcan
 Changes to be committed:
   (use "git reset HEAD <file>..." to unstage)
@@ -133,8 +131,8 @@ $ git commit -m "add feature vulcan"
 
 切回`dev`，准备合并：
 
-```
-$ git switch dev
+```bash
+git switch dev
 ```
 
 一切顺利的话，feature分支和bug分支是类似的，合并，然后删除。
@@ -145,8 +143,8 @@ $ git switch dev
 
 虽然白干了，但是这个包含机密资料的分支还是必须就地销毁：
 
-```
-$ git branch -d feature-vulcan
+```bash
+git branch -d feature-vulcan
 error: The branch 'feature-vulcan' is not fully merged.
 If you are sure you want to delete it, run 'git branch -D feature-vulcan'.
 ```
@@ -155,8 +153,8 @@ If you are sure you want to delete it, run 'git branch -D feature-vulcan'.
 
 现在我们强行删除：
 
-```
-$ git branch -D feature-vulcan
+```bash
+git branch -D feature-vulcan
 Deleted branch feature-vulcan (was 287773e).
 ```
 
@@ -166,8 +164,8 @@ Deleted branch feature-vulcan (was 287773e).
 
 查看远程库信息，用`git remote`：
 
-```
-$ git remote
+```bash
+git remote
 origin
 ```
 
@@ -179,14 +177,14 @@ origin
 
 推送分支，就是把该分支上的所有本地提交推送到远程库。推送时，要指定本地分支，这样，Git就会把该分支推送到远程库对应的远程分支上：
 
-```
-$ git push origin master
+```bash
+git push origin master
 ```
 
 如果要推送其他分支，比如`dev`，就改成：
 
-```
-$ git push origin dev
+```bash
+git push origin dev
 ```
 
 - `抓取分支`
@@ -195,13 +193,13 @@ $ git push origin dev
 
 在dev分支开发
 
-```
-$ git checkout -b dev origin/dev
+```bash
+git checkout -b dev origin/dev
 ```
 
 分开开发冲突时，先用`git pull`把最新的提交从`origin/dev`抓下来，然后，在本地合并，解决冲突，再推送：
 
-```
+```bash
 $ git pull
 There is no tracking information for the current branch.
 Please specify which branch you want to merge with.
@@ -216,7 +214,7 @@ If you wish to set tracking information for this branch you can do so with:
 
 `git pull`也失败了，原因是没有指定本地`dev`分支与远程`origin/dev`分支的链接，根据提示，设置`dev`和`origin/dev`的链接：
 
-```
+```bash
 $ git branch --set-upstream-to=origin/dev dev
 ```
 
@@ -260,3 +258,92 @@ $ git branch --set-upstream-to=origin/dev dev
 - 命令`git push origin --tags`可以推送全部未推送过的本地标签；
 - 命令`git tag -d `可以删除一个本地标签；
 - 命令`git push origin :refs/tags/`可以删除一个远程标签。
+
+## 4 [git submodule添加、更新和删除 ](https://www.cnblogs.com/jyroy/p/14367776.html)
+
+### 4.1 添加
+
+`git submodule add <url> <path>` 
+
+-   url：替换为自己要引入的子模块仓库地址
+-   path：要存放的本地路径
+
+执行添加命令成功后，可以在当前路径中看到一个.gitsubmodule文件，里面的内容就是我们刚刚add的内容
+
+如果在添加子模块的时候想要指定分支，可以利用 -b 参数
+
+`git submodule add -b <branch> <url> <path>` 
+
+例子
+
+未指定分支
+
+`git submodule add https://github.com/tensorflow/benchmarks.git 3rdparty/benchmarks` 
+
+.gitsubmodule内容
+
+```bash
+[submodule "3rdparty/benchmarks"]
+	path = 3rdparty/benchmarks
+	url = https://github.com/tensorflow/benchmarks.git
+```
+
+指定分支
+
+```bash
+git submodule add -b cnn_tf_v1.10_compatible https://github.com/tensorflow/benchmarks.git 3rdparty/benchmarks
+```
+
+.gitsubmodule内容
+
+```bash
+[submodule "3rdparty/benchmarks"]
+	path = 3rdparty/benchmarks
+	url = https://github.com/tensorflow/benchmarks.git
+	branch = cnn_tf_v1.10_compatible
+```
+
+使用
+
+当我们add子模块之后，会发现文件夹下没有任何内容。这个时候我们需要再执行下面的指令添加源码。
+
+```bash
+git submodule update --init --recursive
+```
+
+这个命令是下面两条命令的合并版本
+
+```bash
+git submodule init
+git submodule update
+```
+
+### 4.2 更新
+
+我们引入了别人的仓库之后，如果该仓库作者进行了更新，我们需要手动进行更新。即进入子模块后，执行
+
+`git pull` 
+
+进行更新。
+
+### 4.3 删除
+
+1.  删除子模块目录及源码
+
+`rm -rf 子模块目录` 
+
+2.  删除.gitmodules中的对应子模块内容
+
+`vi .gitmodules` 
+
+3.  删除.git/config配置中的对应子模块内容
+
+`vi .git/config` 
+
+4.  删除.git/modules/下对应子模块目录
+
+`rm -rf .git/modules/子模块目录` 
+
+5.  删除git索引中的对应子模块
+
+`git rm --cached 子模块目录`
