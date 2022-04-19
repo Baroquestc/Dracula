@@ -86,5 +86,22 @@
 
 #### **6.1.2 Face View**的选择
 
+## 7. 三维重建拓展1-基于RGBD重建 
 
+### 7.1 RGBD的获取 
+
+- 深度相机主要分为结构光和ToF:主流ToF相机
+  - Kinect v1:结构光方案
+  - Kinect v2:ToF方案
+
+### 7.2 经典开源框架 
+
+- 最经典的RGB-D重建算法即为帝国理工的Newcombe等人在2011年提出的KinectFusion 
+- 后续有Kintinuous，ElasticFusion，ElasticReconstruction，DynamicFusion，InfiniTAM，BundleFusion等
+
+- review:State of the Art on 3D Reconstruction with RGB‐D Cameras 
+- KinectFusion: Real-time dense surface mapping and tracking
+- BundleFusion
+
+#### 7.2.1 KinectFusion 
 
