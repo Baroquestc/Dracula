@@ -1,9 +1,12 @@
 * [简介]()
 * [阅读指南](read_guide.md)
 * 2\. 预备知识
-   <!-- * [2.1 环境配置](chapter02_prerequisite/2.1_install.md) -->
+   * [2.1 环境配置](chapter02_prerequisite/2.1_install.md)
    * [2.2 数据操作](chapter02_prerequisite/2.2_tensor.md)
    * [2.3 自动求梯度](chapter02_prerequisite/2.3_autograd.md)
+   * [2.4 数据预处理](chapter02_prerequisite/2.4_pandas.md)
+   * [2.5 线性代数](chapter02_prerequisite/2.5_linear-algebra.md)
+   * [2.6 微积分](chapter02_prerequisite/2.6_calculus.md)
 * 3\. 深度学习基础
    * [3.1 线性回归](chapter03_DL-basics/3.1_linear-regression.md)
    * [3.2 线性回归的从零开始实现](chapter03_DL-basics/3.2_linear-regression-scratch.md)
