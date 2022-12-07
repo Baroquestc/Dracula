@@ -1,69 +1,84 @@
-# FaceReconstruction
+## 1 定义
 
-## 1 什么是3D人脸重建？
+- 人脸3D重建：从一张或多张2D图像中重建出人脸的3D模型。  
 
-       **人脸3D重建：从一张或多张2D图像中重建出人脸的3D模型。**  
-       **3D人脸模型：**  
-       我们可以用这样一个表达式来建模3D人脸模型：  
-M = ( S , T ) M = (S,T) M\=(S,T)  
-       其中， S S S表示人脸3D坐标形状向量（shape-vector）：  
-S = ( x 1 , y 1 , z 1 , x 2 , y 2 , z 2 , ⋯ &ThinSpace; , x n , y n , z n ) T S = (x\_1,y\_1,z\_1,x\_2,y\_2,z\_2,\\cdots,x\_n,y\_n,z\_n)^T S\=(x1,y1,z1,x2,y2,z2,⋯,xn,yn,zn)T  
-        T T T表示对应点的文理信息向量（texture-vector）：  
-T = ( R 1 , G 1 , B 1 , R 2 , G 2 , B 2 , ⋯ &ThinSpace; , R n , G n , B n ) T T = (R\_1,G\_1,B\_1,R\_2,G\_2,B\_2,\\cdots,R\_n,G\_n,B\_n)^T T\=(R1,G1,B1,R2,G2,B2,⋯,Rn,Gn,Bn)T  
-       2D的人脸图片可以看作是3D人脸在2D平面上的一个投影， I I I 代表 M M M的2D投影， I ( u , v ) I(u,v) I(u,v)代表像素 ( u , v ) (u,v) (u,v)处的纹理值，所以3D人脸重建就是从2D图片中计算出 M M M的估计：  
-M ^ = ( S ^ , T ^ ) \\hat M = (\\hat S,\\hat T) M^\=(S^,T^)  
-       用图像表示更为直观：
+- 3D人脸模型：  
 
-![这里写图片描述](https://img-blog.csdn.net/20180911112032827?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+  我们可以用这样一个表达式来建模3D人脸模型：
+  $$
+  M = ( S , T )
+  $$
+  其中，$S$表示人脸3D坐标形状向量（shape-vector）：
+  $$
+  S = ( x 1 , y 1 , z 1 , x 2 , y 2 , z 2 , ⋯, x n , y n , z n )
+  $$
+  $T$表示对应点的纹理信息向量（texture-vector）：  
+  $$
+  T = ( R 1 , G 1 , B 1 , R 2 , G 2 , B 2 , ⋯ , R n , G n , B n )
+  $$
+  2D的人脸图片可以看作是3D人脸在2D平面上的一个投影，$I$代表$M$的2D投影， $I ( u , v)$ ) 代表像素$(u,v)$处的纹理值，所以3D人脸重建就是从2D图片中计算出$M$的估计：
+$$
+\hat M = (\hat S,\hat T)
+$$用图像表示更为直观：
 
-## 2 重建方法分类
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003744121.gif)
 
-       在过去20年中，研究者们在3D人脸重建方面贡献甚多，2D人脸图像到3D人脸重建方法也是多种多样，硬要为其做个分类，大致如下图（当然可能不太全面）：
+## 2 重建分类
 
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70.png)
 
-![这里写图片描述](https://img-blog.csdn.net/20180911113350359?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+- 传统3D人脸重建方法，大多是立足于图像信息，如基于**图像亮度、边缘信息、线性透视、颜色、相对高度、视差**等等一种或多种信息建模技术进行3D人脸重建。 
 
-       传统3D人脸重建方法，大多是立足于图像信息，如基于**图像亮度、边缘信息、线性透视、颜色、相对高度、视差**等等一种或多种信息建模技术进行3D人脸重建。这方面的技术论文，无论国内外都相当多，也较杂乱，一时间个人也不好具体统计，总之其中也是有很多不错的思想和方法的，当然这也不是本文重点内容。  
-       基于模型的3D人脸重建方法，是目前较为流行的3D人脸重建方法；3D模型主要用三角网格或点云来表示，现下流行的模型有**通用人脸模型（CANDIDE-3）**和**三维变形模型（3DMM）及其变种**模型，基于它们的3D人脸重建算法既有传统算法也有深度学习算法。  
-       端到端3D人脸重建方法，是近年新起的方法；它们绕开了人脸模型，设计自己的3D人脸表示方法，采用CNN结构进行直接回归，端到端地重建3D人脸。
+- 基于模型的3D人脸重建方法，是目前较为流行的3D人脸重建方法；3D模型主要用三角网格或点云来表示，现下流行的模型有**通用人脸模型（CANDIDE-3**和**三维变形模型（3DMM）及其变种**模型，基于它们的3D人脸重建算法既有传统算法也有深度学习算法。 
+
+- 端到端3D人脸重建方法，是近年新起的方法；它们绕开了人脸模型，设计自己的3D人脸表示方法，采用CNN结构进行直接回归，端到端地重建3D人脸。
 
 ## 3 通用模型3D人脸重建
 
-       得到人脸的通用模型，通常有三种方法：第一种方法是采用三维扫描仪获取数据，此方法采集精度高但设备价格昂贵；第二种方法是采用计算机图形技术创建人脸；第三种是利用一些商业的建模软件生成人脸通用模型，目前在市场上比较著名的人头模型生成商业软件有FaceGen Modeller，3D Max 和Poser7.0 等等。  
-       在众多通用人脸模型中，**CANDIDE-3模型**是目前被学术界广泛使用的一种通用模型，其符合MPEG-4标准中对人脸的定义。  
-       CANDIDE-3模型总共有**113个顶点**，**168个面**组成，可以通过对这些点和面的操作调节形成特定的人脸，下图为CANDIDE-3的模型展示图：
+​		得到人脸的通用模型，通常有三种方法：
+
+- 三维扫描仪获取数据，此方法采集精度高但设备价格昂贵；
+- 采用计算机图形技术创建人脸；
+- 商业的建模软件生成人脸通用模型，目前在市场上比较著名的人头模型生成商业软件有FaceGen Modeller，3D Max 和Poser7.0 等等。  
+  在众多通用人脸模型中，**CANDIDE-3模型**是目前被学术界广泛使用的一种通用模型，其符合MPEG-4标准中对人脸的定义。  
+  CANDIDE-3模型总共有**113个顶点**，**168个面**组成，可以通过对这些点和面的操作调节形成特定的人脸，下图为CANDIDE-3的模型展示图：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911132601462?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723060.png)
 
-       通用模型重建法的本质是对通用模型进行修改使得其特征与所需要恢复的输入图像相配，一般包括**整体性调整**和**局部性调整**两个方面。整体性调整主要是针对模型的轮廓，通过一定的方法如特征点对应使得通用模型的整体布局（如眼耳鼻眉）和输入图片的五官布局尽量一致；局部性调整指的是针对局部细节尤其是人脸五官的微调，让局部细节更为精确。在进行完这两项调整之后，再辅助以**基于顶点的插值运算**就可以重建人脸。通用模型法的优点是**计算量较小**，但其显著缺陷就是因**顶点数目过少**导致对人脸轮廓的模拟和**面部细节刻画不够细腻**，故只能适用于精度要求不高的场合。
+通用模型重建法的本质是对通用模型进行修改使得其特征与所需要恢复的输入图像相配，一般包括**整体性调整**和**局部性调整**两个方面。整体性调整主要是针对模型的轮廓，通过一定的方法如特征点对应使得通用模型的整体布局（如眼耳鼻眉）和输入图片的五官布局尽量一致；局部性调整指的是针对局部细节尤其是人脸五官的微调，让局部细节更为精确。在进行完这两项调整之后，再辅助以**基于顶点的插值运算**就可以重建人脸。通用模型法的优点是**计算量较小**，但其显著缺陷就是因**顶点数目过少**导致对人脸轮廓的模拟和**面部细节刻画不够细腻**，故只能适用于精度要求不高的场合。
 
 ## 4 3D变形模型3D人脸重建
 
-       形变模型（Morphable Model）这一名词来源于计算机图形学中一个名叫Morphing技术的图像生成算法。Morphing 技术主要思想：如果两幅图像中存在一定的对应关系，那么就可以利用这个对应关系生成具一副有平滑过渡效果的图像。
+   形变模型（Morphable Model）这一名词来源于计算机图形学中一个名叫Morphing技术的图像生成算法。Morphing 技术主要思想：如果两幅图像中存在一定的对应关系，那么就可以利用这个对应关系生成具一副有平滑过渡效果的图像。
 
-## 4.1 初版3DMM
+### 4.1 初版3DMM
 
        文献：《A Morphable Model For The Synthesis Of 3D Faces》  
        在这个思想的引导下，在1999 年，瑞士巴塞尔大学的科学家Blanz 和Vetter 提出了一种十分具有创新性的方法：**三维形变模型(3DMM)** 。三维形变模型建立在**三维人脸数据库**的基础上，以**人脸形状和人脸纹理**统计为约束，同时考虑到了人脸的姿态和光照因素的影响，因而生成的三维人脸模型精度高。  
-       3DMM模型数据库人脸数据对象的线性组合，在上面3D人脸表示基础上，假设我们建立3D变形的人脸模型由m个人脸模型组成，其中每一个人脸模型都包含相应的 S i S\_i Si， T i T\_i Ti两种向量，这样在表示新的3D人脸模型时，我们就可以用以下的方式：  
-S n e w M o d e l = S ‾ + ∑ i = 1 m − 1 α i s i S\_{newModel} =\\overline{S} + \\sum \_{i=1}^{m-1} \\alpha\_is\_i SnewModel\=S+i\=1∑m−1αisi  
+       3DMM模型数据库人脸数据对象的线性组合，在上面3D人脸表示基础上，假设我们建立3D变形的人脸模型由m个人脸模型组成，其中每一个人脸模型都包含相应的 S i S\_i Si， T i T\_i Ti两种向量，这样在表示新的3D人脸模型时，我们就可以用以下的方式：
+$$
+S_{newModel} = S ‾ + ∑ i = 1 m − 1 α i s i S\_{newModel} =\\overline{S} + \\sum \_{i=1}^{m-1} \\alpha\_is\_i SnewModel\=S+i\=1∑m−1αisi
+$$
+
+$$
+
 T n e w M o d e l = T ‾ + ∑ i = 1 m − 1 β i t i T\_{newModel} = \\overline{T} + \\sum \_{i=1}^{m-1} \\beta\_it\_i TnewModel\=T+i\=1∑m−1βiti  
        其中 S ‾ \\overline S S表示平均脸部形状模型， s i s\_i si表示shape的PCA部分， α i \\alpha\_i αi表示对应系数；文理模型同理。  
        像这样，一张新的人脸模型就可以由已有的脸部模型线性组合。也就是说，我们可以通过改变系数，在已有人脸基础上生成不同人脸。
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912112312746?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723097.png)
 
-## 4.2 表情3DMM
+### 4.2 表情3DMM
 
        初版3DMM虽然解决了人脸变形模型的表达，但其在人脸表情表达上面明显不足，在2014年时，FacewareHouse这篇论文提出并公开了一个人脸表情数据库，使得3DMM有了更强的表现力。从而人脸模型的线性表示可以扩充为：  
 S n e w M o d e l = S ‾ + ∑ i = 1 m − 1 α i s i + ∑ i = 1 n − 1 β i e i S\_{newModel} =\\overline{S} + \\sum \_{i=1}^{m-1} \\alpha\_is\_i + \\sum \_{i=1}^{n-1}\\beta\_i e\_i SnewModel\=S+i\=1∑m−1αisi+i\=1∑n−1βiei
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912125111904?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723128.png)
 
-## 4.3 人脸重建
+### 4.3 人脸重建
 
        参考文献：[https://blog.csdn.net/likewind1993/article/details/81455882](https://blog.csdn.net/likewind1993/article/details/81455882)  
        从上面可以看出，人脸重建问题就转向了求 α \\alpha α， β \\beta β问题，为了简便，这里就只讨论Shape重建，文理重建同理。
@@ -91,7 +106,7 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
        研究提出的深度定性和定量评估表明，他们所提出的3DMM取得了最先进的结果，大大优于现有模型。最后，为了造福研究社区，他们公开了所提出的自动3DMM建造管道的源代码，以及构建的全球3DMM和根据年龄，性别和种族量身定制的各种定制模型。
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912135438441?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723156.png)
 
        （1）基于综合呈现视图进行自动标记。这些视图注册了像素级的形状信息，因此可将 2D 标记（landmark）可信地投影回 3D 表面；  
        （2）在自动标记的引导下，3D 模型不断迭代变形，以精确匹配数据集的每个 3D 面部网格；  
@@ -104,7 +119,7 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
        本研究中，提出了一种数据驱动型的方法，解决如何从一张单独的浓缩照片中预测整个一般平面，特别聚焦于人脸。论文创造了一种新的方法，探索将可用的人脸数据集用于数据库建设的可行性。研究者特意设计了一个深度卷积神经网络来评估人脸“in-the-wild”状态下的正常表面。还训练了一个全卷积的网络，能够精确地从多样化的表情的图片中还原正常表情。我们比较最先进的 Shape-from-Shading 和 3D 重建技术，结果表明我们提出的网络可以大幅度恢复更正确和逼真的人脸。而且，相比其他现有的面部特异性表面恢复方法， 由于我们网络的完全卷积性质，我们不需要解决明确的对齐问题。
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912140414482?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723192.png)
 
        这些都是从由 300W 人脸数据集 “in-the-wild” 生成的。上图展示了作者提出的网络能广泛适用于多种不同人脸和表情。最左边是 300W 数据集的原始图像。中间一列是 3D形状重建，右边一列是将图像中采样到的纹理转换为形状。
 
@@ -115,12 +130,12 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
        传统的3DMM是从2D人脸图像的3D人脸扫描中学习的，并由两组PCA基函数表示。由于训练数据的类型和数量，以及线性基础，3DMM的表示能力是有限的。所以提出了Nonlinear-3DMM，更好地表达人脸信息。
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912144608608?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723219.png)
 
        本文提出的Nonlinear-3DMM是通过DNNs来学习Shape和Texture，不需要3D扫描，能够更好地重建人脸。
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180912145331510?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723249.png)
 
 ## 5 端到端3D人脸重建
 
@@ -134,20 +149,20 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
        我的理解是，将人脸看成是从耳后平面到鼻尖平面的200个横切片，每张切片就是等高点，如下图：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911134841174?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723273.png)
 
        **2 CNN结构：**  
        这样一来，我们CNN就可以直接回归出这个Volumetric，而不是是直接预测顶点坐标，其结构如下：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911140014818?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723300.png)
 
        如上图，基础CNN结构采用沙漏网络，论文提出了三种方案，（a）表示直接从图片重建，（b）表示加入了人脸特征点作为引导，（c）表示多任务（重建+人脸特征点预测）结构；实验证明效果最好的是第二种方法。
 
        **3 重建效果：**
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911140617303?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723341.png)
 
        该方法优点是，设计了自己的3D人脸表示方法，结构简单粗暴，收到不俗的效果，论文代码链接中有官方在线demo，读者可以体验。
 
@@ -166,7 +181,7 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
         针对这些问题，本文设计了UV position map来表示，如下图：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911142611600?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723375.png)
 
         左图是输入图像的3D图和3D点云ground-truth；右边第1行，分别是2D图像，UV文理映射图，相应的UV位置映射图；右边第2行，分别是UV位置映射图的x，y，z通道。  
         然而开源数据集，如300W-LP，的ground-truth是没有用UV表示的，而3DMM，所有我们是基于3DMM创建的UV标签。3DMM又是依据BFM（Basel Face Model）【20】，所有我们UV还得与BFM建立联系，[文献【35】](https://github.com/anilbas/3DMMasSTN#uv-texture-space-embedding-for-basel-face-model)中提到解决办法（具体细节，待考证）。最终我们选择256最为UV尺寸，约50K个点来表示Face mesh。
@@ -175,7 +190,7 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
         有了UV表示方法，我们就可以直接用CNN网络回归UV参数，如下图：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911142856366?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723407.png)
 
         采用encoder-decoder结构，256x256x3的输入人脸图像，输出256x256x3的位置映射图；编码结构采用10个残差块级联构成，解码结构有17层反卷积层构成，激活层采用ReLU，最后输出层采用Sigmoid激活函数。
 
@@ -183,29 +198,29 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
         为了强调重点，优化性能，本文还设计了weight mask形式的Loss function：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911142916761?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723426.png)
 
         其意义在于，不同位置或区域，计算error时权重不一样，看重或者特殊区域权重给高点，网络就会更关注这块。总共分为4中不同等级，如下图：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911142929424?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723451.png)
 
         4等级：特征点（68点），眼睛、鼻子、嘴巴，其他脸部，脸以外的部分；他们的权重分别比：16:4:3:0
 
        **4 重建效果：**
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911143249693?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723486.png)
 
        **5 总结：**  
        该方法结构简单，便于实现，也便于进一步优化，并取得不俗效果；但也存在问题，生成的mesh存在明显条纹：
 
 
-![这里写图片描述](https://img-blog.csdn.net/20180911143904460?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723527.png)
 
        尤其是鼻子部分，个人认为这是由于UV图像映射到3D时必然存在的，但或许可以通过平滑或插值来解决这个问题，如平滑后：
 
-![这里写图片描述](https://img-blog.csdn.net/20180911144236728?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+![这里写图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula70-20220618003723566.png)
 
 ## 5.3 2DASL（4.15更新）
 
@@ -217,12 +232,12 @@ a r g m i n ( ∣ ∣ X p r o j e c t i o n − X ∣ ∣ 2 + λ ∑ i = 1 ( γ 
        **论文Pipeline：**
 
 
-![在这里插入图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula20190415094828183.png)
+![在这里插入图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/draculawatermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=,size_16,color_FFFFFF,t_70.png)
 
        **论文效果：**
 
 
-![在这里插入图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/dracula20190415095025984.png)
+![在这里插入图片描述](https://dracula-images.oss-cn-beijing.aliyuncs.com/draculawatermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTE2ODE5NTI=,size_16,color_FFFFFF,t_70-20220618003723860.png)
 
 ## 6 网格优化
 
@@ -232,4 +247,4 @@ Laplacian Mesh Optimization：[https://blog.csdn.net/linmingan/article/details/7
 ## 7 人脸数据库
 
 官网：[http://www.face-rec.org/databases/](http://www.face-rec.org/databases/)  
-博客：[https://blog.csdn.net/holybin/article/details/25735093](https://blog.csdn.net/holybin/article/details/25735093)
+博客：[https://blog.csdn.net/holybin/article/details/25735093](
